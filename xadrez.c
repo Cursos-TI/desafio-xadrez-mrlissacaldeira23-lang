@@ -1,32 +1,127 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-// Desafio de Xadrez - MateCheck
-// Este código inicial serve como base para o desenvolvimento do sistema de movimentação das peças de xadrez.
-// O objetivo é utilizar estruturas de repetição e funções para determinar os limites de movimentação dentro do jogo.
+/* Funções auxiliares bem formadas e declaradas antes do main */
 
-int main() {
-    // Nível Novato - Movimentação das Peças
-    // Sugestão: Declare variáveis constantes para representar o número de casas que cada peça pode se mover.
+// Recursão simples para imprimir movimentos do bispo
+void mover_bispo_recursivo(int movimento) {
+    if (movimento > 7) return;
+    printf("Bispo move para a diagonal %d\n", movimento);
+    mover_bispo_recursivo(movimento + 1);
+}
 
-    // Implementação de Movimentação do Bispo
-    // Sugestão: Utilize uma estrutura de repetição para simular a movimentação do Bispo em diagonal.
+void torre_recursivo(int movimento) {
+    if (movimento > 7) return;
+    printf("Torre move para a direita %d\n", movimento);
+    torre_recursivo(movimento + 1);
+}
 
-    // Implementação de Movimentação da Torre
-    // Sugestão: Utilize uma estrutura de repetição para simular a movimentação da Torre para a direita.
+void rainha_recursivo(int movimento) {
+    if (movimento > 7) return;
+    printf("Rainha move para a esquerda %d\n", movimento);
+    rainha_recursivo(movimento + 1);
+}
 
-    // Implementação de Movimentação da Rainha
-    // Sugestão: Utilize uma estrutura de repetição para simular a movimentação da Rainha para a esquerda.
+void cavalo_recursivo(int horizontal, int vertical, int movimentos_restantes) {
+    if (movimentos_restantes == 0) return;
+    printf("Cavalo move em L: horizontal %d, vertical %d\n", horizontal, vertical);
+    cavalo_recursivo(horizontal, vertical, movimentos_restantes - 1);
+}
 
-    // Nível Aventureiro - Movimentação do Cavalo
-    // Sugestão: Utilize loops aninhados para simular a movimentação do Cavalo em L.
-    // Um loop pode representar a movimentação horizontal e outro vertical.
+// Valida movimento do cavalo (não é recursiva, apenas valida)
+int validar_movimento_cavalo(int x_inicial, int y_inicial, int x_final, int y_final) {
+    int dx = abs(x_final - x_inicial);
+    int dy = abs(y_final - y_inicial);
+    return (dx == 2 && dy == 1) || (dx == 1 && dy == 2);
+}
 
-    // Nível Mestre - Funções Recursivas e Loops Aninhados
-    // Sugestão: Substitua as movimentações das peças por funções recursivas.
-    // Exemplo: Crie uma função recursiva para o movimento do Bispo.
+// Imprime todos os possíveis destinos do cavalo no tabuleiro (para demonstração)
+void imprimir_possiveis_movimentos_cavalo_tabuleiro(void) {
+    for (int x = 1; x <= 8; x++) {
+        for (int y = 1; y <= 8; y++) {
+            if ((x + 2 <= 8 && y + 1 <= 8) || (x + 2 <= 8 && y - 1 >= 1) ||
+                (x - 2 >= 1 && y + 1 <= 8) || (x - 2 >= 1 && y - 1 >= 1) ||
+                (x + 1 <= 8 && y + 2 <= 8) || (x + 1 <= 8 && y - 2 >= 1) ||
+                (x - 1 >= 1 && y + 2 <= 8) || (x - 1 >= 1 && y - 2 >= 1)) {
+                printf("Cavalo pode mover para (%d, %d)\n", x, y);
+            }
+        }
+    }
+}
 
-    // Sugestão: Implemente a movimentação do Cavalo utilizando loops com variáveis múltiplas e condições avançadas.
-    // Inclua o uso de continue e break dentro dos loops.
+int main(void) {
+    // Contadores de exemplo para movimentos
+    int movimento_bispo = 0;
+    int movimento_torre = 0;
+    int movimento_rainha = 0;
+    int movimento_cavalo = 0;
+
+    // Exemplos simples com loops
+    for (movimento_bispo = 1; movimento_bispo <= 7; movimento_bispo++) {
+        printf("Bispo move para a diagonal %d\n", movimento_bispo);
+    }
+
+    for (movimento_torre = 1; movimento_torre <= 7; movimento_torre++) {
+        printf("Torre move para a direita %d\n", movimento_torre);
+    }
+
+    for (movimento_rainha = 1; movimento_rainha <= 7; movimento_rainha++) {
+        printf("Rainha move para a esquerda %d\n", movimento_rainha);
+    }
+
+    // Exemplo simples do cavalo
+    imprimir_possiveis_movimentos_cavalo_tabuleiro();
+    for (int h = 1; h <= 2; h++) {
+        for (int v = 1; v <= 2; v++) {
+            printf("Cavalo move em L: horizontal %d, vertical %d\n", h, v);
+            movimento_cavalo++;
+        }
+    }
+
+    // Entrada de posições para validar um movimento de cavalo
+    int pos_inicial_x = 0, pos_inicial_y = 0, pos_final_x = 0, pos_final_y = 0;
+    printf("Digite a posição inicial do cavalo (x y): ");
+    if (scanf("%d %d", &pos_inicial_x, &pos_inicial_y) != 2) {
+        fprintf(stderr, "Entrada inválida.\n");
+        return 1;
+    }
+    printf("Digite a posição final do cavalo (x y): ");
+    if (scanf("%d %d", &pos_final_x, &pos_final_y) != 2) {
+        fprintf(stderr, "Entrada inválida.\n");
+        return 1;
+    }
+
+    if (validar_movimento_cavalo(pos_inicial_x, pos_inicial_y, pos_final_x, pos_final_y)) {
+        printf("Movimento válido para o cavalo.\n");
+    } else {
+        printf("Movimento inválido para o cavalo.\n");
+    }
+
+    // Demonstrações recursivas (nível mestre)
+    mover_bispo_recursivo(1);
+    torre_recursivo(1);
+    rainha_recursivo(1);
+    cavalo_recursivo(1, 1, 4);
+
+    // Saída final resumida
+    printf("bispo: %d, torre: %d, rainha: %d, cavalo: %d\n",
+           movimento_bispo, movimento_torre, movimento_rainha, movimento_cavalo);
+    printf("diagonal %d\n", movimento_bispo);
+    printf("direita %d\n", movimento_torre);
+    printf("esquerda %d\n", movimento_rainha);
+    printf("horizontal %d, vertical %d\n", movimento_cavalo, movimento_cavalo);
+    printf("Cavalo pode mover para (%d, %d)\n", pos_final_x, pos_final_y);
 
     return 0;
 }
+
+    
+
+
+    
+
+
+    
+
+
+    
